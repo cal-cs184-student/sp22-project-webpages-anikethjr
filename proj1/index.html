@@ -1,7 +1,110 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 1 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 284A Rasterizer</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 284A: Computer Graphics and Imaging, Spring 2022</h1>
+<h1 align="middle">Project 1: Rasterizer</h1>
+<h2 align="middle">Aniketh Janardhan Reddy and Aditya Ramkumar</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
+
+<h2 align="middle">Section I: Rasterization</h2>
+
+<h3 align="middle">Part 1: Rasterizing single-color triangles</h3>
+
+<p>The first step in rasterizing a triangle is to determine the smallest possible rectangular bounding box that contains the triangle. The four corners of this box can be computed as (x_min, y_min), (x_min, y_max), (x_max, y_min) and (x_max, y_max). x_min and x_max are the minimum and maximum x-coordinates of the three corners of the triangle respectively (and similarly for y_min and y_max). Since pixels are only present at coordinates that are integers, we compute the floor of x_min and y_min and the ceiling of x_max and y_max to get the final bounding box. Then for every pixel within this bounding box, we test whether it is inside the triangle and thus must be filled with the triangle's color. Since the center of every pixel is actually at an integer plus (.5,.5), we actually perform the test at every pixel using its center's coordinates. To test if a given point is inside the triangle, we can use the following algorithm:
+  Let the coordinates of the triangle's corners be p0 = (x0, y0), p1 = (x1, y1) and p2 = (x2, y2) and let the coordinates of the point we are testing be p = (x, y).
+  <ol>
+  <li> Since the ordering of the triangle's corners is unknown (can be clockwise or anti-clockwise), we first need to determine the side of the edge from p0 to p1 that p2 lies in. This can be determined using the line test. The line test is given by: <br><br> L(p2, p0, p1) = -(p2.x - p0.x)*(p1.y - p0.y) + (p2.y - p0.y)*(p1.x - p0.x). <br><br> If L(p2, p0, p1) < 0, p2 is above the line from p0 to p1 and if L(p2, p0, p1) > 0, it is below the line.</li><br>
+  <li> Now, point p is inside the triangle (or on the border) if (L(p, p0, p1) * L(p2, p0, p1)) >= 0 and (L(p, p1, p2) * L(p2, p0, p1)) >= 0 and (L(p, p2, p0) * L(p2, p0, p1)) >= 0, else it is outside the triangle.</li>
+</ol>
+Since we only test the points inside the smallest possible bounding box, this algorithm is efficient and we do not test every point in the frame buffer. The image rasterized using our code is shown below.
+</p>
+
+<div align="middle">
+<img src="images/task1.png" align="middle" width="400px"/>
+<figcaption align="middle">Screenshot of basic/test4.svg</figcaption>
+</div>
+
+<!-- <p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/image1.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+      <td>
+        <img src="images/image2.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="images/image3.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+      <td>
+        <img src="images/image4.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div> -->
+
+
+<h3 align="middle">Part 2: Antialiasing triangles</h3>
+
+
+
+<h3 align="middle">Part 3: Transforms</h3>
+
+
+
+<h2 align="middle">Section II: Sampling</h2>
+
+<h3 align="middle">Part 4: Barycentric coordinates</h3>
+
+
+<h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+
+
+<h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+
+
+
+<h2 align="middle">Section III: Art Competition</h2>
+<p>If you are not participating in the optional art competition, don't worry about this section!</p>
+
+<h3 align="middle">Part 7: Draw something interesting!</h3>
+
+</body>
 </html>
