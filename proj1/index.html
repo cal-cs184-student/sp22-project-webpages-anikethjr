@@ -136,7 +136,37 @@ If we are given three vertices V1, V2 and V3, we can find alpha, beta and gamma 
 
 <h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
 
+<p> Level sampling is a way through which we can set our texture appropriately in the case where where textures are minified. To this end for minification and maginification, we can use mipmaps where the texture is downsampled. Mipmaps are essentially a set of layers of images where each subsequent layer represents a lower resultion -- we want to pick the level which is closest to the screen sampling rate. </p>
 
+<p> To implement this for texture mapping, I first cacluated the barycentric coordinates of (x + 1, y) and (x, y + 1) to find du/dx and dv/dx. I then found L, which is the max of sqrt((du/dx)^2 + (dv/dx)^2) and sqrt((du/dy)^2 + (dv/dy)^2). I then used this to find the mipmap level, D = log2(L). I mades sure to scale up the difference vectors accordingly by the width and height of the full-resolution texture image. </p>
+
+
+<p>For pixel sampling, ...
+For level sampling, L_LINEAR takes up the most memory space since it involves mulitple levels. L_ZERO and L_NEAREST are tied for second, since they both only sample from a single mipmap level. For computation time, L_LINEAR also takes the longest since again it involves sampling from multiple levels. L_NEAREST follows since it involves determining which level to sample from, and L_ZERO is the fastest. 
+
+
+For number of samples per pixel, ... </p>
+
+
+<div align="middle">
+<img src="images/l0_linear.png" align="middle" width="500px"/>
+<figcaption align="middle">Screenshot of L_ZERO and P_LINEAR</figcaption>
+</div>
+
+<div align="middle">
+<img src="images/l0_nearestpixel.png" align="middle" width="500px"/>
+<figcaption align="middle">Screenshot of L_ZERO and P_NEAREST</figcaption>
+</div>
+
+<div align="middle">
+<img src="images/lnearest_nearestpixel.png" align="middle" width="500px"/>
+<figcaption align="middle">Screenshot of L_NEAREST and P_NEAREST</figcaption>
+</div>
+
+<div align="middle">
+<img src="images/lnearest_linear.png" align="middle" width="500px"/>
+<figcaption align="middle">Screenshot of L_NEAREST and P_LINEAR</figcaption>
+</div>
 
 <h2 align="middle">Section III: Art Competition</h2>
 <p>If you are not participating in the optional art competition, don't worry about this section!</p>
