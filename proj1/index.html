@@ -83,7 +83,54 @@ Since we only test the points inside the smallest possible bounding box, this al
 
 <h3 align="middle">Part 2: Antialiasing triangles</h3>
 
+To perform supersampling, we first resize the sample buffer so as to be a 1D vector of size width * height * sample_rate (where width and height are the width and height of the frame buffer). If we think of the sample buffer as a 2D matrix, it would be (width * sqrt(sample_rate)) x (height * sqrt(sample_rate)). To perform supersampling, we fill this bigger sample buffer and then fill the framebuffer by averaging over the colors of the supersampled pixels that correspond to any given real pixel (the sample_rate defines the number of supersampled pixels per real pixel). Since we sample at many more points per unit area during supersampling compared to conventional rasterization, we get reduced aliasing (including effects such as moire). Averaging over the supersampled pixels to get the real pixel's color produces smoother transitions, thereby reducing jaggies.
+<br><br>
+To antialias triangles, we increase the number of samples in the bounding box by the sample_rate i.e. if there are n real pixels in the bounding box, we instead sample at (sample_rate * n) supersampled pixels. This means that the distance between samples is reduced. In conventional rasterization, we check if the centre of a pixel inside the bounding box, located at some integer coordinates (x, y) + (.5, .5), is inside the triangle. However, during supersampling, we consider sample_rate supersampled pixels per real pixel, located at:
+<br><br>
+(x, y) + (1/(sqrt(sample_rate) + 1), 1/(sqrt(sample_rate) + 1)), <br>
+(x, y) + (1/(sqrt(sample_rate) + 1), 2*1/(sqrt(sample_rate) + 1)),  <br> 
+(x, y) + (1/(sqrt(sample_rate) + 1), 3*1/(sqrt(sample_rate) + 1)),  <br> 
+...<br>
+(x, y) + (1/(sqrt(sample_rate) + 1), sqrt(sample_rate)*1/(sqrt(sample_rate) + 1)),  <br> 
+<br>
+(x, y) + (2*1/(sqrt(sample_rate) + 1), 1/(sqrt(sample_rate) + 1)), <br>
+(x, y) + (2*1/(sqrt(sample_rate) + 1), 2*1/(sqrt(sample_rate) + 1)),  <br> 
+(x, y) + (2*1/(sqrt(sample_rate) + 1), 3*1/(sqrt(sample_rate) + 1)),  <br> 
+...<br>
+(x, y) + (2*1/(sqrt(sample_rate) + 1), sqrt(sample_rate)*1/(sqrt(sample_rate) + 1)),  <br> 
+<br>
+...<br>
+<br>
+(x, y) + (sqrt(sample_rate)*1/(sqrt(sample_rate) + 1), 1/(sqrt(sample_rate) + 1)), <br>
+(x, y) + (sqrt(sample_rate)*1/(sqrt(sample_rate) + 1), 2*1/(sqrt(sample_rate) + 1)),  <br> 
+(x, y) + (sqrt(sample_rate)*1/(sqrt(sample_rate) + 1), 3*1/(sqrt(sample_rate) + 1)),  <br> 
+...<br>
+(x, y) + (sqrt(sample_rate)*1/(sqrt(sample_rate) + 1), sqrt(sample_rate)*1/(sqrt(sample_rate) + 1)),  <br> 
+<br><br>
+and determine if each of these coordinates is inside the triangle using line tests. If so, the entries corresponding to these supersampled pixels coordinates in the sample buffer are colored. Finally, we fill the framebuffer by averaging over the colors of the supersampled pixels that correspond to any given real pixel.
+<br><br>
+We also had to slightly modify the fill_pixel function to allow for point and line rasterization. If the fill_pixel function is not fed supersampled pixels coordinates and is instead fed real pixel coordinates (indicated by a parameter), then all the sample_rate supersampled pixels corresponding to the real pixel are filled. So, when the framebuffer is filled, the real pixel will have the correct color.
+<br><br>
+The results obtained using supersampling are shown below. We see that as the sample_rate is increased, the amount of aliasing goes down. This is evidenced by fewer jaggies since averaging over the supersampled pixels to get the real pixel's color produces smoother transitions, thereby reducing jaggies.
 
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task2_1.png" align="middle" width="400px"/>
+        <figcaption align="middle">Screenshot of basic/test4.svg rendered using sample_rate = 1</figcaption>
+      </td>
+      <td>
+        <img src="images/task2_4.png" align="middle" width="400px"/>
+        <figcaption align="middle">Screenshot of basic/test4.svg rendered using sample_rate = 4</figcaption>
+      </td>
+      <td>
+        <img src="images/task2_16.png" align="middle" width="400px"/>
+        <figcaption align="middle">Screenshot of basic/test4.svg rendered using sample_rate = 16</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <h3 align="middle">Part 3: Transforms</h3>
 
@@ -123,7 +170,7 @@ If we are given three vertices V1, V2 and V3, we can find alpha, beta and gamma 
 </div>
 
 <p>
-  Here is a png screenshot of svg/basic/test7.svg with default viewing parameters and sample rate 1.
+  Here is a png screenshot of svg/basic/test7.svg with default viewing parameters and sample_rate 1.
 </p>
 
 <div align="middle">
