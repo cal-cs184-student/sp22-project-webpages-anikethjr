@@ -87,7 +87,7 @@ Since we only test the points inside the smallest possible bounding box, this al
 
 <h3 align="middle">Part 3: Transforms</h3>
 
-<p> In this section, we implemented translate, rotate and scale according to the SVG spec by defining the matrices in transforms.cpp appropriately. The svg/transforms/robot.svg file rendered as expected. </p>
+<p> In this section, we implemented translate, rotate and scale according to the SVG spec by defining the 3 x 3 matrices in transforms.cpp appropriately. The svg/transforms/robot.svg file rendered as expected. </p>
 
 <div align="middle">
 <img src="images/my_robot.png" align="middle" width="400px"/>
@@ -105,6 +105,31 @@ Since we only test the points inside the smallest possible bounding box, this al
 
 <h3 align="middle">Part 4: Barycentric coordinates</h3>
 
+<p>
+A barycentric coordinate system is one where the coordinate of a point can be represented by weights placed at the three vertices of a triangle. If a point is within a triangle, then all of the weights (alpha, beta and gamma) are positive, and if is outside they may be negative.
+</p><p>
+If we are given three vertices V1, V2 and V3, we can find alpha, beta and gamma that satisfies: 
+<ul>
+  <li> V = V1 (alpha) + V2 (beta) + V3 (gamma) </li>
+  <li> alpha + beta + gamma = 1 </li>
+</ul>
+
+</p>
+<p> Barycentric coordinates enable us to interpolate across a triangle. If we create an svg file that plots a single triangle with one red, one green, and one blue vertex, it produces a smoothly blended color triangle. </p>
+
+<div align="middle">
+<img src="images/barycentric_triangle.png" align="middle" width="250px"/>
+<figcaption align="middle">Screenshot of barycentric interpolation of a single triangle with 3 vertices of different colors</figcaption>
+</div>
+
+<p>
+  Here is a png screenshot of svg/basic/test7.svg with default viewing parameters and sample rate 1.
+</p>
+
+<div align="middle">
+<img src="images/barycentric_circle.png" align="middle" width="400px"/>
+<figcaption align="middle">Screenshot of svg/basic/test7.svg</figcaption>
+</div>
 
 <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
 
