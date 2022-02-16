@@ -185,10 +185,40 @@ Pixel sampling is a texture mapping method. To draw a textured triangle, we need
 The uv-coordinates of an image pixel are computed using barycentric coordinates. First, the barycentric coordinates of a pixel inside the triangle are computed. Then, the coordinates are used as weights to compute the weighted average of the uv-coordinates of the corners. This weighted average is the uv-coordinate of the pixel.
 <br><br>
 Next, we need to compute the color of the pixel's uv-coordinate. This can be done in two ways - using the nearest neighbor or bilinear interpolation. Nearest neighbor is simple - it just assigns the color of the sample closest to the given uv-coordinate. The nearest neighbor of (u, v) can be computed as (round(u), round(v)). However, nearest neighbor can introduce blocking artifacts as can be seen in the examples. Bilinear interpolation leads to fewer aliasing artifacts as it ensures smooth transitions between colors. It works by first getting the uv-coordinates of the four nearest neighbors. Then, it linearly interpolates the colors of these four nearest neighbours using the calculations shown in the figure below (from the lecture slides).
+
+
 <div align="middle">
 <img src="images/bilinear.png" align="middle" width="400px"/>
 <figcaption align="middle">Bilinear interpolation</figcaption>
 </div>
+
+
+<p> Now we can use the pixel inspector to find a good example of where bilinear sampling clearly defeats nearest sampling. Here, we show and compare four png screenshots using nearest sampling at 1 sample per pixel, nearest sampling at 16 samples per pixel, bilinear sampling at 1 sample per pixel, and bilinear sampling at 16 samples per pixel. </p>
+
+<div align="middle">
+<img src="images/nearest_1.png" align="middle" width="400px"/>
+<figcaption align="middle">Nearest Sampling; 1 sample/pixel</figcaption>
+</div>
+
+<div align="middle">
+<img src="images/nearest_16.png" align="middle" width="400px"/>
+<figcaption align="middle">Nearest Sampling; 16 samples/pixel</figcaption>
+</div>
+
+<div align="middle">
+<img src="images/bilinear_1.png" align="middle" width="400px"/>
+<figcaption align="middle">Bilinear Sampling; 1 sample/pixel</figcaption>
+</div>
+
+<div align="middle">
+<img src="images/bilinear_16.png" align="middle" width="400px"/>
+<figcaption align="middle">Bilinear Sampling; 16 samples/pixel</figcaption>
+</div>
+
+
+
+<p> 
+The relative difference between nearest and bilinear sampling can be seen in these images where there is lots of "noise"/high contrast. In the bilinear sampling case, lines/edges are smoother - since there is a lot of details, filtering with bilinear interpolation can help make things look smoother. Supersampling can also help get rid of the "jaggies", as we can see in the 16 samples/pixel case - for both nearest and bilinear sampling they are smoother. </p>
 
 
 <h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
