@@ -180,6 +180,16 @@ If we are given three vertices V1, V2 and V3, we can find alpha, beta and gamma 
 
 <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
 
+Pixel sampling is a texture mapping method. To draw a textured triangle, we need both the cartesian coordinates of the triangle's corners and the coordinates of the corners that correspond to positions in a given a texture file. This texture file defines a space of uv-coordinates with each point being assigned a color. However, since a texture file is of limited resolution, we only have the colors assigned to a sample of points in the uv-space. For pixel sampling, the resolution of the texture file must be the same as the resolution of the image. Texture mapping is the task of computing the uv-coordinates of an image pixel given the uv-coordinates of the triangle corners and then using the sample of points in the uv-space to assign a color to the image pixel.
+<br><br>
+The uv-coordinates of an image pixel are computed using barycentric coordinates. First, the barycentric coordinates of a pixel inside the triangle are computed. Then, the coordinates are used as weights to compute the weighted average of the uv-coordinates of the corners. This weighted average is the uv-coordinate of the pixel.
+<br><br>
+Next, we need to compute the color of the pixel's uv-coordinate. This can be done in two ways - using the nearest neighbor or bilinear interpolation. Nearest neighbor is simple - it just assigns the color of the sample closest to the given uv-coordinate. The nearest neighbor of (u, v) can be computed as (round(u), round(v)). However, nearest neighbor can introduce blocking artifacts as can be seen in the examples. Bilinear interpolation leads to fewer aliasing artifacts as it ensures smooth transitions between colors. It works by first getting the uv-coordinates of the four nearest neighbors. Then, it linearly interpolates the colors of these four nearest neighbours using the calculations shown in the figure below (from the lecture slides).
+<div align="middle">
+<img src="images/bilinear.png" align="middle" width="400px"/>
+<figcaption align="middle">Bilinear interpolation</figcaption>
+</div>
+
 
 <h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
 
