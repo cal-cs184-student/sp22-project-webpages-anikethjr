@@ -187,11 +187,11 @@ If we are given three vertices V1, V2 and V3, we can find alpha, beta and gamma 
 
 <p> To implement this for texture mapping, I first cacluated the barycentric coordinates of (x + 1, y) and (x, y + 1) to find du/dx and dv/dx. I then found L, which is the max of sqrt((du/dx)^2 + (dv/dx)^2) and sqrt((du/dy)^2 + (dv/dy)^2). I then used this to find the mipmap level, D = log2(L). I mades sure to scale up the difference vectors accordingly by the width and height of the full-resolution texture image. </p>
 
-<p> Pixel sampling has the lowest memory usage compared to the rest of the techniques, since it only requires dealing with level 0 mipmaps. For certain types of sampling, like bilinear sampling, there are more floating point operations per pixel which leads to it being computationally expensive. </p>
+<p> Pixel sampling has the lowest memory and computation usage compared to the rest of the techniques, since it only requires dealing with level 0 mipmaps. Nearest neighbor is faster than biliear interpolation for pixel. </p>
 
 <p> Level sampling could take up more space/memory than pixel sampling due to having to store multiple levels. For level sampling, L_LINEAR takes up the most memory space since it involves mulitple levels. L_ZERO and L_NEAREST are tied for second, since they both only sample from a single mipmap level. For computation time, L_LINEAR also takes the longest since again it involves sampling from multiple levels. L_NEAREST follows since it involves determining which level to sample from, and L_ZERO is the fastest. </p>
 
-<p> Supersampling should have the highest memory usage and be the slowest. Supersampling increases the number of samples. The number of samples impacts computation and memory usage directly - as you increase the number of samples, you decrease speed and increase memory usage. It is the best for anti-aliasing though. </p>
+<p> Supersampling should have the highest memory usage and be the slowest. Supersampling increases the number of samples. The number of samples impacts computation and memory usage directly - as you increase the number of samples, you decrease speed and increase memory usage. Supersampling is best for antialiasing, followed by bilinear level sampling, nearest level sampling, level 0 sampling, bilinear pixel sampling and nearest pixel sampling in that order. </p>
 
 <div align="middle">
 <img src="images/l0_linear.png" align="middle" width="500px"/>
