@@ -87,7 +87,19 @@ Since we only test the points inside the smallest possible bounding box, this al
 
 <h3 align="middle">Part 3: Transforms</h3>
 
+<p> In this section, we implemented translate, rotate and scale according to the SVG spec by defining the matrices in transforms.cpp appropriately. The svg/transforms/robot.svg file rendered as expected. </p>
 
+<div align="middle">
+<img src="images/my_robot.png" align="middle" width="400px"/>
+<figcaption align="middle">Screenshot of svg/transforms/robot.svg</figcaption>
+</div>
+
+<p> We decided to create a robot that's waving at traffic for "something more interesting". To this end, we rotated one segment of the robot's leg by 30 degrees and the bottom segment by -30 degrees. We also rotated the outer part of the left arm by 45 degrees and modified the translate to make things line up. Below is the final result. </p>
+
+<div align="middle">
+<img src="images/my_robot_wave.png" align="middle" width="400px"/>
+<figcaption align="middle">Screenshot of svg/transforms/my_robot.svg</figcaption>
+</div>
 
 <h2 align="middle">Section II: Sampling</h2>
 
