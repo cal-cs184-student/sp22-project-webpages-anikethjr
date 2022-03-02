@@ -254,6 +254,176 @@
 
     <h3 align="middle">Part 5: Half-edge split</h3>
 
+    <p>Again, we mapped out the pointer assignments that need to be performed in order to split an edge on a piece of paper and then coded them up. We did not have to debug our code extensively because of this methodical approach. The only hiccup we had was due to our unfamiliarity with iterators. Specifically, we did not know how to create new objects using them. But the provided primer on iterators and their similarity to pointers was helpful in showing us how to allocate new objects. We use the notations from the figure below:</p>
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/split.png" align="middle" width="400px" />
+            <figcaption align="middle">Split operation</figcaption>
+          </td>
+        </tr>
+        <br>
+      </table>
+    </div>
+
+    <p>Similar to the flip operation, we get pointers to the relevant half-edges by performing the following operations (cur_edge is the edge to be split):</p>
+    <ol>
+      <li> The half-edge pointed to by cur_edge = cur_halfedge = cur_edge->halfedge() </li>
+      <li> The twin of half-edge pointed to by cur_edge = twin = cur_halfedge->twin() </li>
+      <li> The next half-edge of the triangle containing the half-edge pointed to by cur_edge = next = cur_halfedge->next() </li>
+      <li> The half-edge from c to a = ca = next </li>
+      <li> The half-edge from d to c = dc = twin->next()->next() </li>
+      <li> The half-edge from a to b = ab = next->next() </li>
+      <li> The half-edge from b to d = bd = twin->next() </li>
+    </ol>
+
+    <p>The pointers to the existing vertices can be obtained as:</p>
+    <ol>
+      <li> a = next->next()->vertex(); </li>
+      <li> b = cur_halfedge->vertex(); </li>
+      <li> c = twin->vertex(); </li>
+      <li> d = twin->next()->next()->vertex(); </li>
+    </ol>
+
+    <p>Pointers to the two existing faces can be obtained as:</p>
+    <ol>
+      <li>The face containing cur_halfedge = cur_face = cur_halfedge->face()</li>
+      <li>The face containing the twin half-edge = twin_face = twin->face()</li>
+    </ol>
+
+    <p>Then, we create the new vertex m as follows (in our implementation cur_edge becomes the top half of the split edge and we create a new edge for the bottom half in later steps):</p>
+    <ul>
+      <li>m->position = (c->position + b->position) / 2.0</li>
+      <li>m->halfedge() = cur_halfedge</li>
+    </ul>
+
+    <p>We also make sure that the existing vertices point to the edges that will be unchanged since some vertices might be pointing to the edge that is being split and thus may become problematic after the split:</p>
+    <ol>
+      <li> a->halfedge() = ab </li>
+      <li> b->halfedge() = bd </li>
+      <li> c->halfedge() = ca </li>
+      <li> d->halfedge() = dc </li>
+    </ol>
+
+    <p>Next, we create the new faces - mab and dmb. We also fix the half-edges pointed to by the existing faces:</p>
+    <ol>
+      <li> mab->halfedge() = ab </li>
+      <li> dmb->halfedge() = bd </li>
+      <li> cur_face->halfedge() = ca </li>
+      <li> twin_face->halfedge() = dc </li>
+    </ol>
+
+    <p>Finally, we create the new half-edges - bm, mb, am, ma, md and dm, and the new edges - AM, MD and BM. We perform the following pointer assignments to set up these new elements and also fix the existing half-edges and edges.</p>
+    <ol>      
+      In the cur_face:
+      <li>ca->next() = am </li>
+      <li>AM->halfedge() = am </li>
+      <li>am->twin() = ma </li>
+      <li>am->next() = cur_halfedge </li>
+      <li>am->vertex() = a </li>
+      <li>am->edge() = AM </li>
+      <li>am->face() = cur_face </li>
+      <li>cur_halfedge->vertex() = m </li>
+      <br>
+
+      In the new mab face:
+      <li>ma->twin() = am </li>
+      <li>ma->next() = ab </li>
+      <li>ma->vertex() = m </li>
+      <li>ma->edge() = AM </li>
+      <li>ma->face() = mab </li>
+      <li>ab->next() = bm </li>
+      <li>ab->face() = mab </li>
+      <li>BM->halfedge() = bm </li>
+      <li>bm->twin() = mb </li>
+      <li>bm->next() = ma </li>
+      <li>bm->vertex() = b </li>
+      <li>bm->edge() = BM </li>
+      <li>bm->face() = mab </li>
+      <br>
+
+      In the twin face:
+      <li>twin->next() = md </li>
+      <li>MD->halfedge() = md </li>
+      <li>md->twin() = dm </li>
+      <li>md->next() = dc </li>
+      <li>md->vertex() = m </li>
+      <li>md->edge() = MD </li>
+      <li>md->face() = twin_face </li>
+      <br>
+
+      In the new dmb face:
+      <li>dm->twin() = md </li>
+      <li>dm->next() = mb </li>
+      <li>dm->vertex() = d </li>
+      <li>dm->edge() = MD </li>
+      <li>dm->face() = dmb </li>
+      <li>mb->twin() = bm </li>
+      <li>mb->next() = bd </li>
+      <li>mb->vertex() = m </li>
+      <li>mb->edge() = BM </li>
+      <li>mb->face() = dmb </li>
+      <li>bd->next() = dm </li>
+      <li>bd->face() = dmb </li>
+      <br>      
+    </ol>
+
+    Here are some screenshots showcasing the edge split operation:
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/teapot_split1.png" align="middle" width="400px" />
+            <figcaption align="middle">Before splits</figcaption>
+          </td>
+          <td>
+            <img src="images/teapot_split2.png" align="middle" width="400px" />
+            <figcaption align="middle">After splits</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr>
+          <td>
+            <img src="images/teapot_split3.png" align="middle" width="400px" />
+            <figcaption align="middle">Before splits</figcaption>
+          </td>
+          <td>
+            <img src="images/teapot_split4.png" align="middle" width="400px" />
+            <figcaption align="middle">After splits</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    Here are some screenshots showcasing the edge split and flip operations when combined:
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/teapot_split_flip1.png" align="middle" width="400px" />
+            <figcaption align="middle">Before flips and splits</figcaption>
+          </td>
+          <td>
+            <img src="images/teapot_split_flip2.png" align="middle" width="400px" />
+            <figcaption align="middle">After flips and splits</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr>
+          <td>
+            <img src="images/teapot_split_flip3.png" align="middle" width="400px" />
+            <figcaption align="middle">Before flips and splits</figcaption>
+          </td>
+          <td>
+            <img src="images/teapot_split_flip4.png" align="middle" width="400px" />
+            <figcaption align="middle">After flips and splits</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+
 
     <h3 align="middle">Part 6: Loop subdivision for mesh upsampling</h3>
 
