@@ -429,10 +429,6 @@
 
     <h3 align="middle">Part 6: Loop subdivision for mesh upsampling</h3>
 
-    Briefly explain how you implemented the loop subdivision and describe any interesting implementation / debugging tricks you have used.
-Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?
-Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.
-
   <p>We performed loop subdivision in 5 main steps. The first step involved computing the new positions of all existing vertices using the loop subdivision rule:</p>
   <p>New position of existing vertex = (1 - nu) * original_position + u * (sum of positions of original neighbours)</p>
   <p>where n is the degree of the vertex in the original mesh and u = 3/16 if n = 3 or u = 3/(8n) otherwise.</p>
