@@ -20,7 +20,7 @@
       font-family: 'Source Sans Pro', sans-serif;
     }
   </style>
-  <title>CS 184 Mesh Editor</title>
+  <title>CS 284A Mesh Editor</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
 </head>
@@ -28,9 +28,9 @@
 
 <body>
 
-  <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2020</h1>
+  <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2022</h1>
   <h1 align="middle">Project 2: Mesh Editor</h1>
-  <h2 align="middle">YOUR NAME, CS184-??</h2>
+  <h2 align="middle">Aniketh Janardhan Reddy and Aditya Ramkumar</h2>
 
   <br><br>
 
@@ -85,6 +85,130 @@
 
 
     <h3 align="middle">Part 4: Half-edge flip</h3>
+    
+    <p>We mapped out the pointer assignments that need to be performed in order to flip an edge on a piece of paper and then coded them up. By doing this, we did not face any major debugging challenges. The implementation tip on assigning all relevant pointers, even if redundant, was also very helpful. We use the notations from the figure below:</p>
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/flip.jpg" align="middle" width="400px" />
+            <figcaption align="middle">Flip operation</figcaption>
+          </td>
+        </tr>
+        <br>
+      </table>
+    </div>
+    <p>To get pointers to the relevant half-edges, we perform the following operations (cur_edge is the edge to be flipped):</p>
+    <ol>
+      <li> The half-edge pointed to by cur_edge = cur_halfedge = cur_edge->halfedge() </li>
+      <li> The twin of half-edge pointed to by cur_edge = twin = cur_halfedge->twin() </li>
+      <li> The next half-edge of the triangle containing the half-edge pointed to by cur_edge = next = cur_halfedge->next() </li>
+      <li> The half-edge from c to a = ca = next </li>
+      <li> The half-edge from d to c = dc = twin->next()->next() </li>
+      <li> The half-edge from a to b = ab = next->next() </li>
+      <li> The half-edge from b to d = bd = twin->next() </li>
+    </ol>
+
+    <p>The pointers to the vertices can be obtained as:</p>
+    <ol>
+      <li> a = next->next()->vertex(); </li>
+      <li> b = cur_halfedge->vertex(); </li>
+      <li> c = twin->vertex(); </li>
+      <li> d = twin->next()->next()->vertex(); </li>
+    </ol>
+
+    <p>Pointers to the two faces can be obtained as:</p>
+    <ol>
+      <li>The face containing cur_halfedge = cur_face = cur_halfedge->face()</li>
+      <li>The face containing the twin half-edge = twin_face = twin->face()</li>
+    </ol>
+
+    <p>Once we have all the necessary pointers, we begin re-assigning them. We start with fixing the half-edges pointed to by the faces:</p>
+    <ol>
+      <li>cur_face->halfedge() = cur_halfedge</li>
+      <li>twin->face()->halfedge() = twin</li>
+    </ol>
+
+    <p>Then, we fixed the half-edges as follows (pointers not mentioned here were left unchanged):</p>
+    <ol>
+      <li>cur_halfedge
+        <ul>
+          <li>->next() = dc</li>
+          <li>->twin() = twin</li>
+          <li>->vertex() = a</li>
+          <li>->edge() = cur_edge</li>
+          <li>->face() = cur_face</li>
+        </ul>
+      </li>
+      <li>twin
+        <ul>
+          <li>->next() = ab</li>
+          <li>->twin() = cur_halfedge</li>
+          <li>->vertex() = d</li>
+          <li>->edge() = cur_edge</li>
+          <li>->face() = twin_face</li>
+        </ul>
+      </li>
+      <li>ca
+        <ul>
+          <li>->next() = cur_halfedge</li>
+          <li>->face() = cur_face</li>
+        </ul>
+      </li>
+      <li>ab
+        <ul>
+          <li>->next() = bd</li>
+          <li>->face() = twin_face</li>
+        </ul>
+      </li>
+      <li>bd
+        <ul>
+          <li>->next() = twin</li>
+          <li>->face() = twin_face</li>
+        </ul>
+      </li>
+      <li>dc
+        <ul>
+          <li>->next() = ca</li>
+          <li>->face() = cur_face</li>
+        </ul>
+      </li>
+    </ol>
+
+    <p>Finally, we fixed the half-edges pointed to by the vertices:</p>
+    <ol>
+      <li>a->halfedge() = cur_halfedge</li>
+      <li>d->halfedge() = twin</li>
+      <li>b->halfedge() = bd</li>
+      <li>c->halfedge() = ca</li>
+    </ol>
+
+    Here are some screenshots showcasing the edge flip operation:
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/teapot_flip1.png" align="middle" width="400px" />
+            <figcaption align="middle">Before flips</figcaption>
+          </td>
+          <td>
+            <img src="images/teapot_flip2.png" align="middle" width="400px" />
+            <figcaption align="middle">After flips</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr>
+          <td>
+            <img src="images/teapot_flip3.png" align="middle" width="400px" />
+            <figcaption align="middle">Before flips</figcaption>
+          </td>
+          <td>
+            <img src="images/teapot_flip4.png" align="middle" width="400px" />
+            <figcaption align="middle">After flips</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
 
 
     <h3 align="middle">Part 5: Half-edge split</h3>
