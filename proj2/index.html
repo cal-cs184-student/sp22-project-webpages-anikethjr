@@ -114,6 +114,7 @@
     	<br><br>
     	Implementation wise, we can use the 1D implementation of de Casteljau’s Algorithm for every row in the N x N control points - this represents all points parameterized by u. As mentioned/implied above, we call the 1D implementation on these resulting points and parameter v to get the final point (u, v). How does the 1D implmentation of de Casteljau's algorithm work? It essentailly calls evaluateStep() N - 1 times to return a interpolated vector representing a point on the Bezier curve. 
     </p>
+    <br>
 
 	<div align="middle">
 	    <img src="images/teapot.png" align="middle" width="400px" />
@@ -124,6 +125,25 @@
 
     <h3 align="middle">Part 3: Average normals for half-edge meshes</h3>
 
+<p>
+    In order to implement area-weighted vertex normals, we used the process that we talked about in lecture. More in depth, we start by getting all the half edges of the current vertex - essentailly, the positions of the neighboring vertices. We tehn can calculate the surface normal for each face. We can weight this surface normal by its area using the unit() function. And lastly, we calcuate the final normal vector for the vertex and return it by summing for each face the weighted normal and calling unit(). 
+</p>
+<br>
+
+    <div align="middle">
+      <table style="width=100%">
+      	<tr>
+          <td>
+            <img src="images/teapot.png" align="middle" width="400px" />
+            <figcaption align="middle">Flat shading.</figcaption>
+          </td>
+          <td>
+            <img src="images/teapot_phong.png" align="middle" width="400px" />
+            <figcaption align="middle">Phong shading.</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
 
     <h3 align="middle">Part 4: Half-edge flip</h3>
     
