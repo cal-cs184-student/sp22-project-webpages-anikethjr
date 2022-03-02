@@ -40,6 +40,8 @@
     <p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole.
       Share your thoughts on what interesting things you've learned from completing the project.</p>
 
+    The website is hosted at <a href="https://cal-cs184-student.github.io/sp22-project-webpages-anikethjr/">https://cal-cs184-student.github.io/sp22-project-webpages-anikethjr/</a>.
+
     <h2 align="middle">Section I: Bezier Curves and Surfaces</h2>
 
     <h3 align="middle">Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
@@ -447,12 +449,138 @@
 
     <h3 align="middle">Part 6: Loop subdivision for mesh upsampling</h3>
 
+  <p>We performed loop subdivision in 5 main steps. The first step involved computing the new positions of all existing vertices using the loop subdivision rule:</p>
+  <p>New position of existing vertex = (1 - nu) * original_position + u * (sum of positions of original neighbours)</p>
+  <p>where n is the degree of the vertex in the original mesh and u = 3/16 if n = 3 or u = 3/(8n) otherwise.</p>
+  <p>In the next step, we compute the positions of the new vertices obtained after splitting all the edges (however, we don't split the edges themselves in this step).</p>
+  <p>Then, we split every existing edge using the previously implemented split operation. The position of the new vertex returned by a split operation is set to the new vertex position computed in the previous step. While performing this step, we need to be careful about iterating over the edges in the mesh. If we use the default iterators returned by mesh.edgesBegin() and mesh.edgesEnd() in the same loop that performs the splitting, we'll run into issues with infinite loops. Instead, we first compute a list of iterators pointing to the old edges and then iterate over this list while performing the splitting. We also need to be careful about setting the isNew parameter - this should be false for old edges and the edge BM created by the split operations (BM defined above in the section on the split operation) and true for all other edges.</p>
+  <p>Next, any new edge between an old vertex and new one is flipped.</p>
+  <p>Finally, the positions of all the vertices (old and new) are updated using the new positions computed in the previous steps.</p>
 
+  <p>Now, let us look at some screenshots of meshes after loop subdivision:</p>
+  <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/cube1.png" align="middle" width="200px" />
+            <figcaption align="middle">Original cube</figcaption>
+          </td>
+          <td>
+            <img src="images/cube2.png" align="middle" width="200px" />
+            <figcaption align="middle">Cube after 1 loop subdivision</figcaption>
+          </td>
+          <td>
+            <img src="images/cube3.png" align="middle" width="200px" />
+            <figcaption align="middle">Cube after 2 loop subdivisions</figcaption>
+          </td>
+          <td>
+            <img src="images/cube4.png" align="middle" width="200px" />
+            <figcaption align="middle">Cube after 3 loop subdivisions</figcaption>
+          </td>
+          <td>
+            <img src="images/cube5.png" align="middle" width="200px" />
+            <figcaption align="middle">Cube after 4 loop subdivisions</figcaption>
+          </td>
+        </tr>
+        <br>
 
-    <h2 align="middle">Section III: Optional Extra Credit</h2>
-    <p>If you are not participating in the optional mesh competition, don't worry about this section!</p>
+        <tr>
+          <td>
+            <img src="images/torus1.png" align="middle" width="200px" />
+            <figcaption align="middle">Original torus</figcaption>
+          </td>
+          <td>
+            <img src="images/torus2.png" align="middle" width="200px" />
+            <figcaption align="middle">Torus after 1 loop subdivision</figcaption>
+          </td>
+          <td>
+            <img src="images/torus3.png" align="middle" width="200px" />
+            <figcaption align="middle">Torus after 2 loop subdivisions</figcaption>
+          </td>
+          <td>
+            <img src="images/torus4.png" align="middle" width="200px" />
+            <figcaption align="middle">Torus after 3 loop subdivisions</figcaption>
+          </td>
+          <td>
+            <img src="images/torus5.png" align="middle" width="200px" />
+            <figcaption align="middle">Torus after 4 loop subdivisions</figcaption>
+          </td>
+        </tr>
+        <br>
 
-    <h3 align="middle">Part 7: Design your own mesh!</h3>
+        <tr>
+          <td>
+            <img src="images/icosahedron1.png" align="middle" width="200px" />
+            <figcaption align="middle">Original icosahedron</figcaption>
+          </td>
+          <td>
+            <img src="images/icosahedron2.png" align="middle" width="200px" />
+            <figcaption align="middle">Icosahedron after 1 loop subdivision</figcaption>
+          </td>
+          <td>
+            <img src="images/icosahedron3.png" align="middle" width="200px" />
+            <figcaption align="middle">Icosahedron after 2 loop subdivisions</figcaption>
+          </td>
+          <td>
+            <img src="images/icosahedron4.png" align="middle" width="200px" />
+            <figcaption align="middle">Icosahedron after 3 loop subdivisions</figcaption>
+          </td>
+          <td>
+            <img src="images/icosahedron5.png" align="middle" width="200px" />
+            <figcaption align="middle">Icosahedron after 4 loop subdivisions</figcaption>
+          </td>
+        </tr>
+        <br>
+
+      </table>
+    </div>
+
+    <p>In general, we see that the meshes become smoother with more loop subdivisions. The sharp corners and edges become a bit more muted. This effect is quite stark for sharp corners that shrink towards the inside of the polygon. Moreover, this smoothening might not be uniform for all vertices - if the mesh is topologically equivalent to a sphere, most vertices will have degree 6 but there will be some vertices, called extraordinary points, with degree less than 6 (guaranteed to exist). Because of the loop subdivision rule, these extraordinary points will not be smoothened as much as the other vertices. Thus, although the original mesh might be symmetric, the modified mesh might be asymmetric. We see this clearly for the cube since it has few vertices - even after one subdivision, the corners are unevenly smoothened as some corners are extraordinary points:</p>
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/extrapt.png" align="middle" width="400px" />
+            <figcaption align="middle">Extraordinary point at one corner of the cube</figcaption>
+          </td>
+        </tr>
+        <br>
+      </table>
+    </div>
+    
+
+    <p>The main problem with the cube is that corners have different degrees, leading to a high level of asymmetry when subdivided. However, if we split every face diagonal, this asymmetry is removed as every corner will then have degree 6 and will thus be evenly smoothened. Although the midpoints of the face diagonals will have degree 4, we need to note that ALL of the midpoints will have degree 4, thus retaining symmetry.</p>
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/cube1.png" align="middle" width="200px" />
+            <figcaption align="middle">Original cube</figcaption>
+          </td>
+          <td>
+            <img src="images/scube1.png" align="middle" width="200px" />
+            <figcaption align="middle">Original cube with split diagonals</figcaption>
+          </td>
+          <td>
+            <img src="images/scube2.png" align="middle" width="200px" />
+            <figcaption align="middle">Cube after 1 loop subdivision</figcaption>
+          </td>
+          <td>
+            <img src="images/scube3.png" align="middle" width="200px" />
+            <figcaption align="middle">Cube after 2 loop subdivisions</figcaption>
+          </td>
+          <td>
+            <img src="images/scube4.png" align="middle" width="200px" />
+            <figcaption align="middle">Cube after 3 loop subdivisions</figcaption>
+          </td>
+          <td>
+            <img src="images/scube5.png" align="middle" width="200px" />
+            <figcaption align="middle">Cube after 4 loop subdivisions</figcaption>
+          </td>
+        </tr>
+        <br>
+      </table>
+    </div>
 
 </body>
 
