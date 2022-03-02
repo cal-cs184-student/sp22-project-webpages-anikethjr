@@ -108,7 +108,17 @@
 
     <h3 align="middle">Part 2: Bezier surfaces with separable 1D de Casteljau subdivision</h3>
 
+    <p>
 
+    	In order to extend de Casteljau algorithm to Bezier surfaces, we can apply it multiple times to find the position on the Bezier surface for some input. More in depth, if we are given an NxN set of 3D control points, we can evaluate the points on the Bezier curve made by every row in the input parametrized by u. In turn, these points can be used as an input to de Casteljau's algorthim to find point parametrized by v. Our final output point is (u, v). 
+    	<br><br>
+    	Implementation wise, we can use the 1D implementation of de Casteljau’s Algorithm for every row in the N x N control points - this represents all points parameterized by u. As mentioned/implied above, we call the 1D implementation on these resulting points and parameter v to get the final point (u, v). How does the 1D implmentation of de Casteljau's algorithm work? It essentailly calls evaluateStep() N - 1 times to return a interpolated vector representing a point on the Bezier curve. 
+    </p>
+
+	<div align="middle">
+	    <img src="images/teapot.png" align="middle" width="400px" />
+	    <figcaption align="middle">Screenshot of bez/teapot.bez.</figcaption>
+	</div>
 
     <h2 align="middle">Section II: Sampling</h2>
 
