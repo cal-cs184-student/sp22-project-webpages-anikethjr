@@ -40,6 +40,41 @@
         <p>This time it's your job to copy-paste in the rest of the sections :)</p>
 
 
+    <h2 align="middle">Part 2: Bounding Volume Hierarchy</h2>
+        <p>In the second part of our project, we implemented a Bounding Volume Hierarchy (BVH). This is essentially a series of nested bounding boxes, which helps us avoid checking all primitives in a scene during ray tracing. In order to implement this, we first created a bounding box that contained all of the primitives. Then recursively, we used a heuristic to dispatch two child nodes (left and right) of our root to split the remaining primitives - we did this as evenly as possible. </p>
+        <p>What heuristic did we use? We settled on caclulating the average bounding box centroid for our elements, and using the difference in # of primitives as the heuristic. We calculated the split along all axes, and split the primitives along the most even one. </p>
+        <p>Here are a couple renderings of normal shading for a few large .dae files that we can only render with BVH acceleration (will take a long time otherwise!)</p>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/CBLucy.png" width="480px" />
+                    <figcaption align="middle">CBLucy.dae takes 0.1286s to render</figcaption>
+                </tr>
+                <tr>
+                    <td align="middle">
+                    <img src="images/maxplank.png" width="480px" />
+                    <figcaption align="middle">maxplank.dae takes 0.2009s to render</figcaption>
+                </tr>
+            </table>
+        </div>
+        <p>The logarithimic runtime of using BVH is evident in the results of rendering times on a few scenes with moderately complex geometries with and without BVH acceleration. The banana.dae file had 2458 primitives and took 30.39 seconds without BVH, and took 0.1639 seconds with BVH. Similarly, the cow.dae file had 5856 primitives took 83.23 seconds without BVH, and took an average of 0.2056 seconds with BVH. Furthermore, larger images take significantly longer to render without BVH to the point where it's infeasable to not use it.</p>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/cow.png" width="480px" />
+                    <figcaption align="middle">Rendering of cow.dae</figcaption>
+                </tr>
+                <tr>
+                    <td align="middle">
+                    <img src="images/banana.png" width="480px" />
+                    <figcaption align="middle">Rendering of banana.dae</figcaption>
+                </tr>
+            </table>
+        </div>
+
+
 
     <h2 align="middle">A Few Notes On Webpages</h2>
         <p>Here are a few problems students have encountered in the past. You will probably encounter these problems at some point, so don't wait until right before the deadline to check that everything is working. Test your website on the instructional machines early!</p>
