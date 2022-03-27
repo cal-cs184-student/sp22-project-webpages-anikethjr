@@ -227,6 +227,21 @@
           </table>
         </div>
 
+    <h2 align="middle">Part 4: Global Illumination</h2>
+        <p>For the fourth part of our project, we implemented functionality to support indirect lighting. This is where we may need to deal with a ray of light that bounces off of mulitple objects, rather than just 0 (light source) or 1 like before. At a high level, the way we do this is by generating the irradiance values after a certain number of bounces for each point we want to render, and summing them up.</p>
+
+        <p>In terms of implementation, we first calculate the direct lighting of a given hit point. If we've hit our depth limit (r.depth <= 1), we can terminate. Else, we use Russian Roulette to determine if we explore the next bounce with some probablity cpdf. If we pass this, we create a new ray with depth = r.depth - 1, send it out, and look for an interesection. If we get an intersection, we call at_least_one_bounce_radiance and recurse. Essentially, for every bounce we're updating the overall illumation of the point of interest</p> 
+
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/image.png" width="480px" />
+                    <figcaption align="middle">Image Description</figcaption>
+                </tr>
+            </table>
+        </div>
+
 
     <h2 align="middle">Part 5: Adaptive Sampling</h2>
         <p>In the fifth part of our project, we implemented adaptive sampling. The premise behind this is that Monte Carlo path tracing results in a lot of noise, which can be eliminated by increasing the number of samples per pixel. Since this is computationally expensive and takes time, we can speed up the process by concentrating our samples on areas that converge slower and quitting early when we encounter areas that converge faster.</p>
