@@ -24,10 +24,6 @@
         <p>If you are well-versed in web development, feel free to ditch this template and make a better looking page. Just make sure that you include all the components as we've laid them out here. </p>
 
     <h2 align="middle">Part 1: Ray Generation and Intersection</h2>
-        Part 1
-Walk through the ray generation and primitive intersection parts of the rendering pipeline.
-Explain the triangle intersection algorithm you implemented in your own words.
-Show images with normal shading for a few small .dae files.
         
         <h3>Ray Generation</h3>
 
@@ -125,6 +121,112 @@ Show images with normal shading for a few small .dae files.
                 </tr>
             </table>
         </div>
+
+    <h2 align="middle">Part 3: Direct Illumination</h2>
+
+        In Part 1, we saw that the Monte Carlo estimate of the integral of radiance over a given pixel is computed by averaging the estimated radiance along each ray sampled for that pixel. Furthermore, the estimated radiance along a ray is computed as the light coming from the intersection point of the ray with the scene. In this part, we implemented two ways to compute this light coming from the intersection as a function of the irradiance at the intersection (i.e. light received by that point from various sources). We limit ourselves at this stage to computing zero and one bounce radiance from the intersection.
+
+        <h3>Direct Lighting with Uniform Hemisphere Sampling</h3>
+
+        <p>One way to compute the irradiance at a point is to uniformly randomly sample rays over the hemisphere centered at the point and projecting outward in the direction of the surface normal. We then compute the intersection of these rays with other primitives in the scene and aggregate the light coming from these intersections. The steps followed are summarized below:</p>
+
+        <ol>
+            <li>Sample an outward direction w_in from a unit hemisphere in object space.</li>
+            <li>Transform the direction w_in to world space by multiplying it with the object-to-world transformation matrix.</li>
+            <li>Construct a ray starting at the point in the direction of w_in.</li>
+            <li>Find the intersection of this ray with the scene.</li>
+            <li>If there is an intersection, compute the emission coming from the light source located at that intersection.</li>
+            <li>Repeat the above steps multiple times.</li>
+        </ol>
+
+        <p>Once we have the emission values computed using multiple sampled directions, we can get the Monte Carlo estimate of the radiance along the original ray coming from the camera using the reflection equation:</p>
+
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/reflection_eqn.png" width="500px" />
+                </tr>
+            </table>
+        </div>
+
+        <p>where N is the number of samples, p is the intersection point of the camera ray with the scene, w_j is the randomly sampled direction from p, w_r is the direction from p to the camera, theta_j is the angle between w_j and the surface normal, f_r(p, w_j to w_r) is the BSDF value at p when the incoming light direction at p is w_j and the outgoing light direction is w_r (both in object space and both directed outward from the surface by convention), L_i(p, w_j) is the emission value of the light source located at the intersection of the ray from p in the direction of w_j with the scene and p(w_j) is the probability of sampling the direction w_j. Since we use uniform hemisphere sampling here, p(w_j) = 1/(2*PI).</p>
+
+        <h3>Direct Lighting by Importance Sampling Lights</h3>
+
+        <p>The results obtained using uniform hemisphere sampling can be noisy and we need a large number of samples to get a good Monte Carlo estimate. These problems can be alleviated using importance sampling. We know that the only directions which will have non-zero emission values are the ones directed at light sources. Thus, we can restrict our samples to be drawn from only these directions instead of all possible directions. This weighting of directions during sampling based on "importance" is called importance sampling. We follow the steps below to get emission values:</p>
+
+        <ol>
+            This is done for every light source in the scene:
+            <li>Sample a direction leading from the point to the light source.</li>
+            <li>Construct a ray starting at the point in the sampled direction.</li>
+            <li>Find the intersection of this ray with the scene. If there is no intersection, that means that light from the source is directly hitting the point and thus contributes to the irradiance at the point. If there is an intersection, there is some primitive that blocks the light and thus this direction does not bring in any irradiance.</li>
+            <li>Provided there was no intersection, compute the emission coming from the light source at the end of the ray.</li>
+            <li>Repeat the above steps multiple times (unless the light source is a point source, in which case only one sample is sufficient by definition).</li>
+        </ol>
+
+        <p>Once we have the emission values computed using multiple sampled directions, we can get the Monte Carlo estimate of the radiance along the original ray coming from the camera using the reflection equation mentioned above. Since we used importance sampling, p(w_j) would change to the value of the PDF for w_j.</p>
+
+        <h3>Comparing Uniform Hemisphere Sampling and Lighting Sampling using example images</h3>
+
+        The images below show examples obtained using both sampling techniques (all parameters held constant except for sampling technique used). From the images, it is very clear that lighting sampling produces images with significantly lower noise. This is because of the rays sampled using lighting sampling actually contributing to the radiance estimate unlike random rays which may not always be directed towards a light source. As a result, lighting sampling is more sample efficient, requiring fewer samples to achieve the same level of rendering quality (or equivalently, achieving much better quality using the same number of samples). The time required for rendering scenes using lighting sampling was also much lower (for example, uniform sampling took about 75s while lighting sampling look about 51s to render CBbunny.dae). This is because lighting sampling is more efficient, requiring fewer primitive intersections to be tested, since any object that is farther away than the light source need not be tested for intersections.
+
+        <div align="middle">
+          <table style="width=100%">
+            <tr>
+              <td>
+                <img src="images/Part3_Uniform_Bunny.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered using uniform hemisphere sampling</figcaption>
+              </td>
+              <td>
+                <img src="images/Part3_Importance_Bunny.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered using lighting sampling</figcaption>
+              </td>
+            </tr>
+            <br>
+            <tr>
+              <td>
+                <img src="images/Part3_Uniform_Spheres.png" align="middle" width="480px" />
+                <figcaption align="middle">CBspheres_lambertian.dae rendered using uniform hemisphere sampling</figcaption>
+              </td>
+              <td>
+                <img src="images/Part3_Importance_Spheres.png" align="middle" width="480px" />
+                <figcaption align="middle">CBspheres_lambertian.dae rendered using lighting sampling</figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <h3>Comparison of noise levels in soft shadows with lighting sampling using different number of rays</h3>
+
+        The images below illustrate the effects on noise levels in soft shadows when different number of rays are used for lighting sampling. As we use more light rays, the noise decreases and the soft shadows become more accurate.
+
+        <div align="middle">
+          <table style="width=100%">
+            <tr>
+              <td>
+                <img src="images/Part3_Importance_Bunny_l_1.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered using 1 light ray</figcaption>
+              </td>
+              <td>
+                <img src="images/Part3_Importance_Bunny_l_4.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered using 4 light rays</figcaption>
+              </td>
+            </tr>
+            <br>
+            <tr>
+              <td>
+                <img src="images/Part3_Importance_Bunny_l_16.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered using 16 light rays</figcaption>
+              </td>
+              <td>
+                <img src="images/Part3_Importance_Bunny_l_64.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered using 64 light rays</figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+
 
     <h2 align="middle">Part 5: Adaptive Sampling</h2>
         <p>In the fifth part of our project, we implemented adaptive sampling. The premise behind this is that Monte Carlo path tracing results in a lot of noise, which can be eliminated by increasing the number of samples per pixel. Since this is computationally expensive and takes time, we can speed up the process by concentrating our samples on areas that converge slower and quitting early when we encounter areas that converge faster.</p>
