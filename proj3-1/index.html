@@ -19,9 +19,9 @@
     <h2 align="middle">Aniketh Janardhan Reddy and Aditya Ramkumar</h2>
 
     <div class="padded">
-        <p>Use this section to write an overview of the assignment. All of the text in your write-up should be <em>in your own words</em>. If you need to add additional HTML features to this document, you can search the <a href="http://www.w3schools.com/">http://www.w3schools.com/</a> website for instructions. To edit the HTML, you can just copy and paste existing chunks and fill in the text and image file names appropriately.</p>
-        <o>The website writeup is intended to be a self-contained walkthrough of the assignment: we want this to be a piece of work which showcases your understanding of relevant concepts through both mesh images as well as written explanations about what you did to complete each part of the assignment. Try to be as clear and organized as possible when writing about your own output files or extensions to the assignment. We want to understand what you've achieved and how you've done it!</p> 
-        <p>If you are well-versed in web development, feel free to ditch this template and make a better looking page. Just make sure that you include all the components as we've laid them out here. </p>
+        <p>In this project we implemented various ray tracing techniques. We learned how to compute ray intersections and make them more efficient using Bounding Volume Hierarchies. Then, we tested two ways to perform ray sampling and thus compute direct illumination and also computed the effects of multiple ray bounces to produce global illumination. Finally, we learned how to efficiently reduce the noise of the Monte Carlo estimate of the radiance integral using adaptive sampling.</p>
+
+        The website is hosted at <a href="https://cal-cs184-student.github.io/sp22-project-webpages-anikethjr/">https://cal-cs184-student.github.io/sp22-project-webpages-anikethjr/</a>.
 
     <h2 align="middle">Part 1: Ray Generation and Intersection</h2>
         
@@ -171,6 +171,8 @@
 
         The images below show examples obtained using both sampling techniques (all parameters held constant except for sampling technique used). From the images, it is very clear that lighting sampling produces images with significantly lower noise. This is because of the rays sampled using lighting sampling actually contributing to the radiance estimate unlike random rays which may not always be directed towards a light source. As a result, lighting sampling is more sample efficient, requiring fewer samples to achieve the same level of rendering quality (or equivalently, achieving much better quality using the same number of samples). The time required for rendering scenes using lighting sampling was also much lower (for example, uniform sampling took about 75s while lighting sampling look about 51s to render CBbunny.dae). This is because lighting sampling is more efficient, requiring fewer primitive intersections to be tested, since any object that is farther away than the light source need not be tested for intersections.
 
+        For all images below, s=64, l=32.
+
         <div align="middle">
           <table style="width=100%">
             <tr>
@@ -232,15 +234,130 @@
 
         <p>In terms of implementation, we first calculate the direct lighting of a given hit point. If we've hit our depth limit (r.depth <= 1), we can terminate. Else, we use Russian Roulette to determine if we explore the next bounce with some probablity cpdf. If we pass this, we create a new ray with depth = r.depth - 1, send it out, and look for an interesection. If we get an intersection, we call at_least_one_bounce_radiance and recurse. Essentially, for every bounce we're updating the overall illumation of the point of interest</p> 
 
-        <div align="center">
-            <table style="width=100%">
-                <tr>
-                    <td align="middle">
-                    <img src="images/image.png" width="480px" />
-                    <figcaption align="middle">Image Description</figcaption>
-                </tr>
-            </table>
+        <h3>Example images rendered using global illumination</h3>
+
+        For all images shown below, s=1024, l=4, m=5.
+         <div align="middle">
+          <table style="width=100%">
+            <tr>
+              <td>
+                <img src="images/Part4_Bunny.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered using global illumination</figcaption>
+              </td>
+              <td>
+                <img src="images/Part4_Wall-E.png" align="middle" width="480px" />
+                <figcaption align="middle">wall-e.dae rendered using global illumination</figcaption>
+              </td>
+            </tr>
+          </table>
         </div>
+
+        <h3>Comparing direct and indirect illumination</h3>
+
+        The images below show the effects of direct and indirect illumination. Direct illumination captures light either emitted by (zero bounce) or directly falling (one bounce) on an object. Indirect illumination captures light that bounces off other objects in the scene and then arrives at point. Direct illumination produces most of the brightness in a scene but indirect illumination is important for getting better shadows and generating lighting for objects that aren't directly hit by light (ex: the ceiling).
+
+        For all images shown below, s=1024, l=4, m=5.
+         <div align="middle">
+          <table style="width=100%">
+            <tr>
+              <td>
+                <img src="images/Part4_Bunnyonly_direct.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered using direct illumination</figcaption>
+              </td>
+              <td>
+                <img src="images/Part4_Bunnyonly_indirect.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered using indirect illumination</figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <h3>Comparing rendered views with different max_ray_depth</h3>
+
+        The images below show the effects of the max ray depth on rendering. We see that the lighting becomes more accurate as the depth increases. This is because we consider lighting coming from more bounces.
+
+        For all images shown below, s=1024, l=4.
+        <div align="middle">
+          <table style="width=100%">
+            <tr>
+              <td>
+                <img src="images/Part4_Bunny_m_0.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with max_ray_depth = 0 (only zero bounce)</figcaption>
+              </td>
+              <td>
+                <img src="images/Part4_Bunny_m_1.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with max_ray_depth = 1 (zero + one bounce)</figcaption>
+              </td></figcaption>
+              </td>
+            </tr>
+            <br>
+            <tr>
+              <td>
+                <img src="images/Part4_Bunny_m_2.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with max_ray_depth = 2 </figcaption>
+              </td>
+              <td>
+                <img src="images/Part4_Bunny_m_3.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with max_ray_depth = 3 </figcaption>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img src="images/Part4_Bunny_m_100.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with max_ray_depth = 100 </figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <h3>Comparing rendered views with various sample-per-pixel rates</h3>
+
+        The images below show the effects of the sample-per-pixel rates on rendering. We see that the image becomes less noisy as the sample-per-pixel rate increases. This is because we consider more samples per pixel, reducing the variance of our Monte Carlo integral of the radiance over a pixel.
+
+        For all images shown below, m=5, l=4.
+        <div align="middle">
+          <table style="width=100%">
+            <tr>
+              <td>
+                <img src="images/Part4_Bunny_s_1.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with sample-per-pixel rate = 1</figcaption>
+              </td>
+              <td>
+                <img src="images/Part4_Bunny_s_2.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with sample-per-pixel rate = 2</figcaption>
+              </td></figcaption>
+              </td>
+            </tr>
+            <br>
+            <tr>
+              <td>
+                <img src="images/Part4_Bunny_s_4.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with sample-per-pixel rate = 4 </figcaption>
+              </td>
+              <td>
+                <img src="images/Part4_Bunny_s_8.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with sample-per-pixel rate = 8 </figcaption>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img src="images/Part4_Bunny_s_16.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with sample-per-pixel rate = 16 </figcaption>
+              </td>
+              <td>
+                <img src="images/Part4_Bunny_s_64.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with sample-per-pixel rate = 64 </figcaption>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img src="images/Part4_Bunny_s_1024.png" align="middle" width="480px" />
+                <figcaption align="middle">CBbunny.dae rendered with sample-per-pixel rate = 1024 </figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+
 
 
     <h2 align="middle">Part 5: Adaptive Sampling</h2>
@@ -265,16 +382,8 @@
 
 
 
-    <h2 align="middle">A Few Notes On Webpages</h2>
-        <p>Here are a few problems students have encountered in the past. You will probably encounter these problems at some point, so don't wait until right before the deadline to check that everything is working. Test your website on the instructional machines early!</p>
-        <ul>
-        <li>Your main report page should be called index.html.</li>
-        <li>Be sure to include and turn in all of the other files (such as images) that are linked in your report!</li>
-        <li>Use only <em>relative</em> paths to files, such as <pre>"./images/image.jpg"</pre>
-        Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.jpg"</pre></li>
-        <li>Pay close attention to your filename extensions. Remember that on UNIX systems (such as the instructional machines), capitalization matters. <pre>.png != .jpeg != .jpg != .JPG</pre>
-        <li>Be sure to adjust the permissions on your files so that they are world readable. For more information on this please see this tutorial: <a href="http://www.grymoire.com/Unix/Permissions.html">http://www.grymoire.com/Unix/Permissions.html</a></li>
-        <li>And again, test your website on the instructional machines early!</li>
+    <h2 align="middle">Contributions</h2>
+        <p>Aniketh worked on Parts 1, 3 and 4. Aditya worked on Parts 2 and 5. Both contributed equally to the project and to the report.</p>
 </div>
 </body>
 </html>
