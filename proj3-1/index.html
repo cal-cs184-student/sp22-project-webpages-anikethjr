@@ -126,6 +126,26 @@ Show images with normal shading for a few small .dae files.
             </table>
         </div>
 
+    <h2 align="middle">Part 5: Adaptive Sampling</h2>
+        <p>In the fifth part of our project, we implemented adaptive sampling. The premise behind this is that Monte Carlo path tracing results in a lot of noise, which can be eliminated by increasing the number of samples per pixel. Since this is computationally expensive and takes time, we can speed up the process by concentrating our samples on areas that converge slower and quitting early when we encounter areas that converge faster.</p>
+        <p>We implemented this by defining a variable I to be 1.96 * sqrt(sigma^2 / n). We then compare the value I to mu * maxTolerance in order to determine if a pixel has converged. As described in the project description, these values can be computed more efficiently by storing a running sum of the illuminance values (and a running sum of the squares of these illuminance values). And to avoid repeated computation, we only do this check once every `sampleCountBuffer` times.</p>
+        <p>Here is the rendering for bunny.dae scene with adaptive sampling. The parameters we used were 2048 samples per pixel, 1 sample per light, and a max ray depth of 5.</p>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/bunny_rate.png" width="480px" />
+                    <figcaption align="middle">Sample rate image for bunny.dae</figcaption>
+                </tr>
+                <tr>
+                    <td align="middle">
+                    <img src="images/bunny.png" width="480px" />
+                    <figcaption align="middle">Noise-free rendered result for bunny.dae</figcaption>
+                </tr>
+            </table>
+        </div>
+        
+
 
 
     <h2 align="middle">A Few Notes On Webpages</h2>
