@@ -1,7 +1,93 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 3-2 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>  
+    div.padded {  
+      padding-top: 0px;  
+      padding-right: 100px;  
+      padding-bottom: 0.25in;  
+      padding-left: 100px;  
+    }  
+  </style> 
+<title>Your Name  |  CS 184</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+<body>
+<br />
+<h1 align="middle">Assignment 3-2: PathTracer</h1>
+    <h2 align="middle">Aditya Ramkumar and Aniketh Janardhan Reddy</h2>
+
+    <div class="padded">
+        <p>Use this section to write an overview of the assignment. All of the text in your write-up should be <em>in your own words</em>. If you need to add additional HTML features to this document, you can search the <a href="http://www.w3schools.com/">http://www.w3schools.com/</a> website for instructions. To edit the HTML, you can just copy and paste existing chunks and fill in the text and image file names appropriately.</p>
+        <o>The website writeup is intended to be a self-contained walkthrough of the assignment: we want this to be a piece of work which showcases your understanding of relevant concepts through both mesh images as well as written explanations about what you did to complete each part of the assignment. Try to be as clear and organized as possible when writing about your own output files or extensions to the assignment. We want to understand what you've achieved and how you've done it!</p> 
+        <p>If you are well-versed in web development, feel free to ditch this template and make a better looking page. Just make sure that you include all the components as we've laid them out here. </p>
+
+        The website is hosted at <a href="https://cal-cs184-student.github.io/sp22-project-webpages-anikethjr/">https://cal-cs184-student.github.io/sp22-project-webpages-anikethjr/</a>.
+
+    <h2 align="middle">Part 1: Ray Generation and Intersection</h2>
+
+        <p>In this part, we implemented ray tracing for glass and mirror objects by adding support for the refraction and reflection of rays. We assumed that mirrors reflect back all of the rays incident on them i.e. they are perfect mirrors. The reflection of a ray in object space coordinate is easy to compute - since the normal is along the z-axis, the z coordinate of the reflected ray is the same as that of the incident ray and the x and y coordinates of the reflected ray have the same magnitude but opposite signs as that of the incident ray. To implement ray tracing for glass objects, we first had to compute the refracted ray using Snell's equations. Then, for every incident ray, we sample the outgoing ray using Schlick's approximation. If the ray undergoes total internal reflection, we just return the reflected ray. Else, with a probability equal to Schlick's reflection coefficient R, we return the reflected ray or with a probability (1-R), we return the refracted ray.</p>
+
+        <p>The images below show renders of two spheres - one which is purely reflective i.e. is a mirror (the one behind), and another that is both reflective and refractive i.e. is made of glass (the one in front). The maximum ray depth is varied to generate the different images. In general, the image gets brighter and more realistic as the max_ray_depth is increased. The soft shadows also become more realistic. More specific effects are described below:<br>
+
+        <br>When max_ray_depth = 0: We only consider light directly emitted by the object and only the lights are visible. 
+        <br>When max_ray_depth = 1: We consider light coming from one or fewer bounces. Thus, in addition to the lights, the other areas of the room (such as the walls) are lit up. Both spheres also show reflections of the lights - the mirror one produces a brighter reflection as expected. The reflections of the lights are visible since these are the only reflections that can hit the camera in one bounce. All other reflections (for example, of the walls), need more than one bounce. Additionally, the ceiling is not visible since it is in the plane of the light and needs rays with more than one bounce to be made visible.
+        <br>When max_ray_depth = 2: The ceiling is now visible since rays originating from the lights and bouncing off of other objects and hitting the ceiling (= two bounces) are considered. The reflections seen in the spherical mirror are almost complete since reflections of walls can hit the camera with two bounces. However, the reflection of the ceiling is not visible since that will need at least 3 bounces. We also see a reflection of the glass sphere in the spherical mirror. Similarly, we see reflections in the glass sphere of the aforementioned objects but the reflections are much dimmer since the glass sphere only reflects a portion of the incident light.
+        <br>When max_ray_depth = 3: We start seeing the effects of refraction in the glass ball. This is because it takes at least 3 bounces for a refracted ray to reach the camera (light source -> object -> first surface of sphere -> second surface of sphere -> camera). In both spheres, the reflection of the ceiling is also finally visible since that needs 3 bounces to hit the camera. 
+        We also see that the region below the glass sphere is now lit by the light source. Light from this region also needs at least 3 bounces to reach the camera (light source -> first surface of glass sphere -> second surface of glass sphere -> region below the glass sphere -> camera). Notice that the reflection of the glass sphere in the spherical mirror is still mostly dark.
+        <br>When max_ray_depth = 4: The reflection of the glass sphere in the spherical mirror is now more complete since it takes at least 4 bounces for the reflection of a refracted ray from the glass sphere to reach the camera (light source -> object -> first surface of glass sphere -> second surface of glass sphere -> spherical mirror -> camera). We start seeing a bright spot on the blue wall next to the glass sphere and a few bright dots are also visible on the glass sphere directly above the bright spot below it. This is because of light coming from the bright spot below the glass sphere hitting the wall or the glass sphere itself and then hitting the camera (= 4 bounces).
+        <br>At max_ray_depth=5 and 100, we do not see any new multibounce effects. However, the existing ones become clearer and the image is more realistic.
+
+        For all images below, s=64, l=4.
+        
+        <div align="middle">
+          <table style="width=100%">
+            <tr>
+              <td>
+                <img src="images/Part1_Spheres_m_0.png" align="middle" width="480px" />
+                <figcaption align="middle">CBspheres.dae rendered with max_ray_depth = 0 (only zero bounce)</figcaption>
+              </td>
+              <td>
+                <img src="images/Part1_Spheres_m_1.png" align="middle" width="480px" />
+                <figcaption align="middle">CBspheres.dae rendered with max_ray_depth = 1 (zero + one bounce)</figcaption>
+              </td></figcaption>
+              </td>
+            </tr>
+            <br>
+            <tr>
+              <td>
+                <img src="images/Part1_Spheres_m_2.png" align="middle" width="480px" />
+                <figcaption align="middle">CBspheres.dae rendered with max_ray_depth = 2 </figcaption>
+              </td>
+              <td>
+                <img src="images/Part1_Spheres_m_3.png" align="middle" width="480px" />
+                <figcaption align="middle">CBspheres.dae rendered with max_ray_depth = 3 </figcaption>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img src="images/Part1_Spheres_m_4.png" align="middle" width="480px" />
+                <figcaption align="middle">CBspheres.dae rendered with max_ray_depth = 4 </figcaption>
+              </td>
+              <td>
+                <img src="images/Part1_Spheres_m_5.png" align="middle" width="480px" />
+                <figcaption align="middle">CBspheres.dae rendered with max_ray_depth = 5 </figcaption>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img src="images/Part1_Spheres_m_100.png" align="middle" width="480px" />
+                <figcaption align="middle">CBspheres.dae rendered with max_ray_depth = 100 </figcaption>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+</div>
+</body>
 </html>
+
+
+
+
