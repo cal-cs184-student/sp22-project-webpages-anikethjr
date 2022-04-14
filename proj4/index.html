@@ -23,18 +23,18 @@
 
 <body>
 
-<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2017</h1>
+<h1 align="middle">CS 284: Computer Graphics and Imaging, Spring 2022</h1>
 <h1 align="middle">Project 4: Cloth Simulator</h1>
-<h2 align="middle">YOUR NAME, CS184-??</h2>
+<h2 align="middle">Aniketh Janardhan Reddy and Aditya Ramkumar, CS284A</h2>
 
 <br><br>
 
 <div>
 
 <h2 align="middle">Overview</h2>
-<p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
+<p>In this project, we worked on cloth simulation by modelling a cloth as a system of point masses connected to each other by springs. We used this model to compute the various forces on the masses and then simulated the cloth's movements by applying these forces on all the masses. Finally, we also explored shaders and different techniques that can be used build them.</p>
 
-<h2 align="middle">Part I: Masses and springs</h2>
+<h2 align="middle">Part 1: Masses and springs</h2>
   <p>In the first part of the project, we implemented a cloth as a grid of point masses connected by springs. There were 3 constraints that we implemented: structural, shearing and bending. Here are a couple pictures of our wireframe from different angles. </p>
 
   <div align="middle">
@@ -77,6 +77,15 @@
       </tr>
     </table>
   </div>
+
+<h2 align="middle">Part 2: Simulation via numerical integration</h2>
+
+<h2 align="middle">Part 5: Shaders</h2>
+
+  <p>A shader is a optimized program which runs independently and in parallel to help optimize certain parts of the graphics pipeline- particularly shading components. There are 2 times of shaders: vertex and fragment shaders. Vertex shaders modify the object vertices and can tranform their position/normal/other geometric properties. Fragment shaders, on the other hand, process a fragment of a scene to write out a single color for what that pixel should be. A fragment in particular encodes all the info to draw a pixel. So the way vertex shaders and fragment shaders work together is that vertex shaders cacluate all the info for vertices in a 3d mesh, then they are interpolated with barycentric interpolation; finally fragment shaders use the information from these vertex shaders to calcuate pixel values and visual surface effects.</p>
+
+  
+
 
 </body>
 </html>
