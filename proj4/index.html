@@ -34,9 +34,50 @@
 <h2 align="middle">Overview</h2>
 <p>In this project, we worked on cloth simulation by modelling a cloth as a system of point masses connected to each other by springs. We used this model to compute the various forces on the masses and then simulated the cloth's movements by applying these forces on all the masses. Finally, we also explored shaders and different techniques that can be used build them.</p>
 
+<h2 align="middle">Part I: Masses and springs</h2>
+  <p>In the first part of the project, we implemented a cloth as a grid of point masses connected by springs. There were 3 constraints that we implemented: structural, shearing and bending. Here are a couple pictures of our wireframe from different angles. </p>
 
+  <div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/p1_pinned2_top.png" align="middle" width="480px" />
+        <figcaption align="middle">scene/pinned2.json from top angle.</figcaption>
+      </td>
+      <td>
+        <img src="images/p1_pinned2_side.png" align="middle" width="480px" />
+        <figcaption align="middle">scene/pinned2.json from side angle.</figcaption>
+      </td></figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 
-<h2 align="middle">Part 1: Masses and springs</h2>
+  <p> Here's what the wireframe looks like (1) without any shearing constraints, (2) with only shearing constraints, and (3) with all constraints. </p>
+
+  <div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/p1_all.png" align="middle" width="480px" />
+          <figcaption align="middle">Wireframe with all constraints</figcaption>
+        </td>
+        <td>
+          <img src="images/p1_no_shearing.png" align="middle" width="480px" />
+          <figcaption align="middle">Wireframe without any shearing constraints</figcaption>
+        </td></figcaption>
+        </td>
+      </tr>
+      <br>
+      <tr>
+        <td>
+          <img src="images/p1_shearing.png" align="middle" width="480px" />
+          <figcaption align="middle">Wireframe with only shearing constraints</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
 
 <h2 align="middle">Part 2: Simulation via numerical integration</h2>
 
