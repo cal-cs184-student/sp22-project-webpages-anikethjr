@@ -84,7 +84,34 @@
 
   <p>A shader is a optimized program which runs independently and in parallel to help optimize certain parts of the graphics pipeline- particularly shading components. There are 2 times of shaders: vertex and fragment shaders. Vertex shaders modify the object vertices and can tranform their position/normal/other geometric properties. Fragment shaders, on the other hand, process a fragment of a scene to write out a single color for what that pixel should be. A fragment in particular encodes all the info to draw a pixel. So the way vertex shaders and fragment shaders work together is that vertex shaders cacluate all the info for vertices in a 3d mesh, then they are interpolated with barycentric interpolation; finally fragment shaders use the information from these vertex shaders to calcuate pixel values and visual surface effects.</p>
 
-  
+  <p>The Blinn-Phong shading model is a method of rendering reflections. Using the Blinn-Phong shading model, we can add ambient (effects of ambient light), diffuse (reflected light that is scattered equally in all directions), specular (reflections from light sources) components to shade the cloth model. Here is a screenshot of your Blinn-Phong shader outputting only the ambient component, a screen shot only outputting the diffuse component, a screen shot only outputting the specular component, and one using the entire Blinn-Phong model.</p>
+
+  <div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/p5_ambient.png" align="middle" width="480px" />
+          <figcaption align="middle">Ambient Component</figcaption>
+        </td>
+        <td>
+          <img src="images/p5_diffuse.png" align="middle" width="480px" />
+          <figcaption align="middle">Diffuse Component</figcaption>
+        </td></figcaption>
+        </td>
+      </tr>
+      <br>
+      <tr>
+        <td>
+          <img src="images/p5_specular.png" align="middle" width="480px" />
+          <figcaption align="middle">Specular Component</figcaption>
+        </td>
+        <td>
+          <img src="images/p5_final_phong.png" align="middle" width="480px" />
+          <figcaption align="middle">Entire Blinn-Phong model</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
 
 
 </body>
