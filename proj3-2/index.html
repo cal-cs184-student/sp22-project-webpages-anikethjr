@@ -19,13 +19,11 @@
     <h2 align="middle">Aditya Ramkumar and Aniketh Janardhan Reddy</h2>
 
     <div class="padded">
-        <p>Use this section to write an overview of the assignment. All of the text in your write-up should be <em>in your own words</em>. If you need to add additional HTML features to this document, you can search the <a href="http://www.w3schools.com/">http://www.w3schools.com/</a> website for instructions. To edit the HTML, you can just copy and paste existing chunks and fill in the text and image file names appropriately.</p>
-        <o>The website writeup is intended to be a self-contained walkthrough of the assignment: we want this to be a piece of work which showcases your understanding of relevant concepts through both mesh images as well as written explanations about what you did to complete each part of the assignment. Try to be as clear and organized as possible when writing about your own output files or extensions to the assignment. We want to understand what you've achieved and how you've done it!</p> 
-        <p>If you are well-versed in web development, feel free to ditch this template and make a better looking page. Just make sure that you include all the components as we've laid them out here. </p>
-
+    	This project was an extension of our 3-1 pathtracer project. Here, we implemented support for rendering with different materials, like mirror and glass materials, as well as microfacet materials. We considered variables that were unique to materials as well as things like the depth of field and light. 
+    	<br>
         The website is hosted at <a href="https://cal-cs184-student.github.io/sp22-project-webpages-anikethjr/">https://cal-cs184-student.github.io/sp22-project-webpages-anikethjr/</a>.
 
-    <h2 align="middle">Part 1: Ray Generation and Intersection</h2>
+    <h2 align="middle">Part 1: Mirror and Glass Materials</h2>
 
         <p>In this part, we implemented ray tracing for glass and mirror objects by adding support for the refraction and reflection of rays. We assumed that mirrors reflect back all of the rays incident on them i.e. they are perfect mirrors. The reflection of a ray in object space coordinate is easy to compute - since the normal is along the z-axis, the z coordinate of the reflected ray is the same as that of the incident ray and the x and y coordinates of the reflected ray have the same magnitude but opposite signs as that of the incident ray. To implement ray tracing for glass objects, we first had to compute the refracted ray using Snell's equations. Then, for every incident ray, we sample the outgoing ray using Schlick's approximation. If the ray undergoes total internal reflection, we just return the reflected ray. Else, with a probability equal to Schlick's reflection coefficient R, we return the reflected ray or with a probability (1-R), we return the refracted ray.</p>
 
@@ -83,6 +81,83 @@
             </tr>
           </table>
         </div>
+
+    <h2 align="middle">Part 2: Microfacet Material</h2>
+    	<p>In this part of the project, we added support for microfacet materials. Specifically, isotropic rough conductors that only reflect. In terms of implementation, we implemented the Microfacet BRDF function, Normal Distribution Function (NDF), Fresnel Term, and Importance Sampling all as described on the spec (with the formulas). It involved implmenting the following: </p> 
+
+    	<ul>
+			<li><code>MicrofacetBSDF::f()</code></li>
+			<li><code>MicrofacetBSDF::D()</code></li>
+			<li><code>MicrofacetBSDF::F()</code></li>
+			<li><code>MicrofacetBSDF::sample_f()</code></li>
+		</ul>
+
+    	<p>Here are a sequence of 4 images of scene CBdragon_microfacet_au.dae, rendered with alpha set to 0.005, 0.05, 0.25 and 0.5. We used 128 samples per pixel, 1 samples per light, and 6 bounces.</p>
+
+    	<div align="middle">
+            <table style="width=100%">
+	            <tr>
+	              <td>
+	                <img src="images/dragon_005.png" align="middle" width="480px" />
+	                <figcaption align="middle">alpha = 0.005</figcaption>
+	              </td>
+	              <td>
+	                <img src="images/dragon_05.png" align="middle" width="480px" />
+	                <figcaption align="middle">alpha = 0.05</figcaption>
+	              </td></figcaption>
+	              </td>
+	            </tr>
+	            <br>
+	            <tr>
+	              <td>
+	                <img src="images/dragon_25.png" align="middle" width="480px" />
+	                <figcaption align="middle">alpha = 0.25</figcaption>
+	              </td>
+	              <td>
+	                <img src="images/dragon_50.png" align="middle" width="480px" />
+	                <figcaption align="middle">alpha = 0.5</figcaption>
+	              </td>
+	            </tr>
+	        </table>
+	    </div>
+
+	    <p>We can see that as the value of alpha increases, the glossiness of the images decreases and the dragon becomes more smooth. Essentially, alpha indicicates the distribution of a surfaces microfacets (how rough it is), so when there's a small alpha light bouncebacks are concentrated and conversely when there's a larger alpha light bouncebacks are more diffused.</p>
+    		
+    	<p>Here are the two images of scene CBbunny_microfacet_cu.dae rendered using cosine hemisphere sampling (default) and importance sampling. The sampling rate is fixed at 64 samples per pixel and 1 samples per light, and the number of bounces is 6. </p>
+
+    	<div align="middle">
+            <table style="width=100%">
+	            <tr>
+	              <td>
+	                <img src="images/bunny_cosine.png" align="middle" width="480px" />
+	                <figcaption align="middle">Cosine sampling</figcaption>
+	              </td>
+	              <td>
+	                <img src="images/bunny_importance.png" align="middle" width="480px" />
+	                <figcaption align="middle">Importance sampling</figcaption>
+	              </td></figcaption>
+	              </td>
+	            </tr>
+	        </table>
+	    </div>
+
+	    <p>As evident in the images, the cosine sampling rendering has some characteristics of copper, but there is significatnly more noise and it doesn't achieve a realistic material model or color of copper. What this highlights is that rays that are cosine sampled following the inverse ray path aren't as likely to satisfy the reflection equation for a given half-vector.</p>
+
+	    <p>We also rendered the bunny with parameters of eta and k for chromium. eta: 3.1743, 3.1800, 2.4650; k: 3.300, 3.3300, 3.2150.</p>
+
+	    <div align="middle">
+            <table style="width=100%">
+	            <tr>
+	              <td>
+	                <img src="images/bunny_chromium.png" align="middle" width="480px" />
+	                <figcaption align="middle">Bunny with eta and k for chromium</figcaption>
+	              </td>
+	            </tr>
+	        </table>
+	    </div>
+
+	<h2 align="middle">Conclusion</h2>
+    	<p>We enjoyed adding support for mirror and glass materials, and microfacet materials. Both Aditya and Aniketh contributed equally to the project, with Aniketh handling part 1's code and writeup and Aditya handling part 2's code and writeup. </p> 
 
 </div>
 </body>
