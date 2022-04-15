@@ -83,6 +83,28 @@ The website is hosted at <a href="https://cal-cs184-student.github.io/sp22-proje
 <h2 align="middle">Part 2: Simulation via numerical integration</h2>
 <p>After creating the cloth as a system of masses and springs, we computed the various forces on each point mass. These included external forces such as gravity and internal forces due to spring deformations. External forces are easy to compute using the F = ma equation. Computing the internal forces required us to use Hooke's law - we computed the deformation in every spring, used Hooke's law to compute the force on each point mass and applied equal but opposite forces on the masses. After computing the net force on a mass, we applied the net force on it using Verlet integration to get its updated position. We also made the simulation a little more realistic by adding damping and constraining the position updates to not be too drastic.</p>
 
+<p>Here are some screenshots of scene/pinned2.json using default parameters:</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part2_def_1.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part2_def_2.png" align="middle" width="480px" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part2_def_3.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/pinned2.json with default parameters. The first screenshot is shortly after the start, the second is in the middle of the simulation and the last is at the end.</caption>
+  </div>
+
+
 <p>Changing the spring constant ks affects the rigidity of the cloth as internal spring forces are directly proportional to ks. For example, if we choose a very small ks value (=2 N/m here), the cloth has a lot more creases and is less rigid with a lot of vibrations. It also hangs lower when compared to a higher value of ks:</p>
 
 <div align="middle">
@@ -169,7 +191,7 @@ The website is hosted at <a href="https://cal-cs184-student.github.io/sp22-proje
   </div>
 
 
-<p>Damping affects the speed with which forces act on the cloth. Increasing damping leads to a slower simulation with the cloth more gradually being affected by both external and internal forces. This is because damping is used to simulate energy lost due to friction, heat and other factors and leads to the reduction of velocity. Although the final resting state of the cloth is similar for low and high values of damping, the cloth takes much longer to reach this resting state with high damping. Here are some screenshots with a relatively low damping value (=0.2):</p>
+<p>Damping affects the speed with which forces act on the cloth. Increasing damping leads to a slower simulation with the cloth more gradually being affected by both external and internal forces. There are also fewer vibrations. This is because damping is used to simulate energy lost due to friction, heat and other factors and leads to the reduction of velocity. Although the final resting state of the cloth is similar for low and high values of damping, the cloth takes much longer to reach this resting state with high damping. Here are some screenshots with a relatively low damping value (=0.2):</p>
 
 <div align="middle">
     <table style="width=100%">
