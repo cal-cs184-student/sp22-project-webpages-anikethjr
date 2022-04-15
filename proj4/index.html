@@ -227,6 +227,47 @@ Here are some screenshots with a relatively higher damping value (~0.9) - the cl
     <caption>Screenshots of scene/pinned4.json in the final resting state</caption>
   </div>
 
+
+<h2 align="middle">Part 3: Handling collisions with other objects</h2>
+
+<p>In this part, we handled collisions of the cloth with other objects in the scene. First, we handled collisions with spheres. This is done by checking if the position of a point mass is inside the sphere after the external and internal forces have acted on it. We can easily test for this by examining the distance of a mass from the centre of the sphere and if this distance is less than the radius, it means that the position is inside the sphere. If this is the case, we determine the point at which the mass would've touched the sphere just before entering it and update the position of the mass to this intersection point (while also accounting for some friction). Here are some results obtained using this step for the cloth from scene/sphere.json for different values of ks (the final resting states are shown):</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part3_ks_500.png" align="middle" width="480px" />
+          <figcaption align="middle">ks = 500</figcaption>
+        </td>
+        <td>
+          <img src="images/part3_ks_5000.png" align="middle" width="480px" />
+          <figcaption align="middle">ks = 5000</figcaption>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part3_ks_50000.png" align="middle" width="480px" />
+          <figcaption align="middle">ks = 50000</figcaption>
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/sphere.json in the final resting state with different values of ks. </caption>
+  </div>
+  As the ks value increases, the cloth becomes more rigid as described in the previous section. Thus, we see fewer creases and folds as ks increases. The cloth also tends to hang a bit higher due to larger spring forces.
+
+  <p>Next, we handled collisions of the cloth with planes. This was done by determining if the last position of a point mass lies on the same side of the plane as its updated position. If they are on opposite sides, the mass has collided with the plane. If this is the case, we again determine where the mass would've collided with the plane and update its position to this intersection point (again, accounting for friction). Here is a screenshot of the cloth from scene/plane.json lying peacefully at rest on the plane:</p>
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part3_plane.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshot of scene/plane.json in the final resting state.</caption>
+  </div>
+
+
 <h2 align="middle">Part 5: Shaders</h2>
 
   <p>A shader is a optimized program which runs independently and in parallel to help optimize certain parts of the graphics pipeline- particularly shading components. There are 2 times of shaders: vertex and fragment shaders. Vertex shaders modify the object vertices and can tranform their position/normal/other geometric properties. Fragment shaders, on the other hand, process a fragment of a scene to write out a single color for what that pixel should be. A fragment in particular encodes all the info to draw a pixel. So the way vertex shaders and fragment shaders work together is that vertex shaders cacluate all the info for vertices in a 3d mesh, then they are interpolated with barycentric interpolation; finally fragment shaders use the information from these vertex shaders to calcuate pixel values and visual surface effects.</p>
