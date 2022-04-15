@@ -268,6 +268,99 @@ Here are some screenshots with a relatively higher damping value (~0.9) - the cl
   </div>
 
 
+<h2 align="middle">Part 4: Handling self-collisions</h2>
+
+<p>We implemented self-collisions in this part. Since computing self-collisions for all pairs of particles is very inefficient, we resort to a spatial hashmap. This hashmap groups together all masses that are close to each other spatially. The grouping is peformed by computing a spatial hash that is the same for all particles that are close to each other. We break up the full space of the scene into smaller cubes. Every cube is assigned a unique hash value = (x / width) + (y / height)*100.0 + (z / max(width, height))*1000.0 where (x, y, z) is the coordinate of the top left corner of the cube. Then, for every point mass, we compute the cube which contains it, compute the hash of the cube and add the point mass to the group of point masses with the same hash. To compute self collisions for a given point mass, we only need to check for collisions between other point masses contained inside the same cube, greatly reducing the number of computations. If there is a collision, we update the positions of the masses so that they are sufficiently away from each other.</p>
+
+<p>Here are some screenshots showing how the cloth from scene/selfCollision.json folds because of self-collisions at various points in time:</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part4_0.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part4_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part4_2.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part4_3.png" align="middle" width="480px" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part4_4.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/selfCollision.json at various times. </caption>
+  </div>
+
+<p>Increasing ks increases cloth rigidity as mentioned in previous sections. Thus, if ks is reduced, the cloth folds on itself more with more creases and folds. Similarly if ks is increased, the number of creases and folds decreases. The screenshots below show this effect:</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part4_ks_500.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part4_ks_500_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/selfCollision.json at various times when ks = 500 N/m. </caption>
+  </div>
+
+  <div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part4_ks50000.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part4_ks50000_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/selfCollision.json at various times when ks = 50000 N/m. </caption>
+  </div>
+
+  <p>Increasing density decreases cloth rigidity as discussed in Part 2. Thus, if density is increased, the cloth folds on itself more with more creases and folds. Similarly if density is reduced, the number of creases and folds decreases. The screenshots below show this effect:</p>
+
+  <div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part4_density_1.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part4_density_1_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/selfCollision.json at various times when density = 1 g/cm2. </caption>
+  </div>
+
+  <div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part4_density_100.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part4_density_100_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/selfCollision.json at various times when density = 100 g/cm2. </caption>
+  </div>
+
 <h2 align="middle">Part 5: Shaders</h2>
 
   <p>A shader is a optimized program which runs independently and in parallel to help optimize certain parts of the graphics pipeline- particularly shading components. There are 2 times of shaders: vertex and fragment shaders. Vertex shaders modify the object vertices and can tranform their position/normal/other geometric properties. Fragment shaders, on the other hand, process a fragment of a scene to write out a single color for what that pixel should be. A fragment in particular encodes all the info to draw a pixel. So the way vertex shaders and fragment shaders work together is that vertex shaders cacluate all the info for vertices in a 3d mesh, then they are interpolated with barycentric interpolation; finally fragment shaders use the information from these vertex shaders to calcuate pixel values and visual surface effects.</p>
