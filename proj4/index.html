@@ -113,6 +113,92 @@
     </table>
   </div>
 
+  <p>Here is a screenshot of our texture mapping shader using our own custom texture by modifying the textures in /textures/.</p>
+
+  <div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/p5_texture.png" align="middle" width="480px" />
+          <figcaption align="middle">Custom texture we used</figcaption>
+        </td>
+        <td>
+          <img src="images/p5_texture_rendered.png" align="middle" width="480px" />
+          <figcaption align="middle">Custom texture mapped onto a flat piece of cloth</figcaption>
+        </td></figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p>We implemented bump and displacement mapping. Bump mapping is where you assign a height for every point on a suface, and set the shading correspondingly (without changing the location of the vertices), so we only need to make changes to the fragment shader. Displacement mapping, on the other hand moves the vertices itself so we need to make changes to the vertex shaders as well.</p>
+
+  <p>In terms of the below renders for bump and displacement mapping, we can see that both affect the appearance of the objects as intended. However, bump mapping doesn't change the behavior of the objects, while displacement mapping actually moves vertices around. In terms of the various coasenesses we tried, they have a minimal effect, but the more course spheres were not as round. </p>
+
+  <div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/p5_bump_coarse_top.png" align="middle" width="480px" />
+          <figcaption align="middle">Bump Mapping, resolution = 16</figcaption>
+        </td>
+        <td>
+          <img src="images/p5_bump_coarse_down.png" align="middle" width="480px" />
+          <figcaption align="middle">Bump Mapping, resolution = 16</figcaption>
+        </td></figcaption>
+        </td>
+      </tr>
+      <br>
+      <tr>
+        <td>
+          <img src="images/p5_bump_fine_side.png" align="middle" width="480px" />
+          <figcaption align="middle">Bump Mapping, resolution = 128</figcaption>
+        </td>
+        <td>
+          <img src="images/p5_bump_fine_down.png" align="middle" width="480px" />
+          <figcaption align="middle">Bump Mapping, resolution = 128</figcaption>
+        </td>
+      </tr>
+      <br>
+      <tr>
+        <td>
+          <img src="images/p5_displacement_coarse_side.png" align="middle" width="480px" />
+          <figcaption align="middle">Displacement Mapping, resolution = 16</figcaption>
+        </td>
+        <td>
+          <img src="images/p5_displacement_coarse_down.png" align="middle" width="480px" />
+          <figcaption align="middle">Displacement Mapping, resolution = 16</figcaption>
+        </td>
+      </tr>
+      <br>
+      <tr>
+        <td>
+          <img src="images/p5_displacement_fine_side.png" align="middle" width="480px" />
+          <figcaption align="middle">Displacement Mapping, resolution = 128</figcaption>
+        </td>
+        <td>
+          <img src="images/p5_displacement_fine_down.png" align="middle" width="480px" />
+          <figcaption align="middle">Displacement Mapping, resolution = 128</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p> Finally, here is a screenshot of our mirror shader on the cloth and on the sphere.</p>
+
+  <div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/p5_mirror_side.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/p5_mirror_down.png" align="middle" width="480px" />
+        </td>
+        </td>
+      </tr>
+    </table>
+  </div>
 
 </body>
 </html>
