@@ -78,8 +78,161 @@
     </table>
   </div>
 
+  Describe the effects of changing the spring constant ks; how does the cloth behave from start to rest with a very low ks? A high ks?
+What about for density?
+What about for damping?
+For each of the above, observe any noticeable differences in the cloth compared to the default parameters and show us some screenshots of those interesting differences and describe when they occur.
+Show us a screenshot of your shaded cloth from scene/pinned4.json in its final resting state! If you choose to use different parameters than the default ones, please list them.
+
 
 <h2 align="middle">Part 2: Simulation via numerical integration</h2>
+<p>After creating the cloth as a system of masses and springs, we computed the various forces on each point mass. These included external forces such as gravity and internal forces due to spring deformations. External forces are easy to compute using the F = ma equation. Computing the internal forces required us to use Hooke's law - we computed the deformation in every spring, used Hooke's law to compute the force on each point mass and applied equal but opposite forces on the masses. After computing the net force on a mass, we applied the net force on it using Verlet integration to get its updated position. We also made the simulation a little more realistic by adding damping and constraining the position updates to not be too drastic.</p>
+
+<p>Changing the spring constant ks affects the rigidity of the cloth as internal spring forces are directly proportional to ks. For example, if we choose a very small ks value (=2 N/m here), the cloth has a lot more creases and is less rigid with a lot of vibrations. It also hangs lower when compared to a higher value of ks:</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part2_small_ks_0.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part2_small_ks_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part2_small_ks_2.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/pinned2.json with low ks (=2 N/m). The first screenshot is shortly after the start, the second is in the middle of the simulation and the last is at the end.</caption>
+  </div>
+
+<p>On the other hand, using a high ks value (=50,000 N/m here), the cloth is more rigid, has fewer creases and has fewer vibrations. It also hangs higher:</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part2_large_ks_0.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part2_large_ks_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part2_large_ks_2.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/pinned2.json with high ks (=50,000 N/m). The first screenshot is shortly after the start, the second is in the middle of the simulation and the last is at the end.</caption>
+  </div>
+
+
+<p>Density is inversely proportional to the rigidity of the cloth. This is because the increased mass of the point masses leads to smaller effects of spring forces. The magnitude of the spring forces is independent of the mass of the objects as per Hooke's law. Thus, for a given value of spring force, the acceleration of a point mass is inversely proportional to its mass, leading to smaller restorative acceleration and thus lower rigidity. The acceleration caused by external forces is independent of mass. So, if we choose a large density value (=100 g/cm2 here), the cloth has a lot more creases and is less rigid with more noticable vibrations. It also hangs lower when compared to a lower value of density:</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part2_large_density_0.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part2_large_density_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part2_large_density_2.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/pinned2.json with high density (=100 g/cm2). The first screenshot is shortly after the start, the second is in the middle of the simulation and the last is at the end.</caption>
+  </div>
+
+<p>On the other hand, using a low density value (=1 g/cm2 here), the cloth is more rigid, has fewer creases and has fewer vibrations. It also hangs higher:</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part2_small_density_0.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part2_small_density_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part2_small_density_2.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/pinned2.json with low density (=1 g/cm2). The first screenshot is shortly after the start, the second is in the middle of the simulation and the last is at the end.</caption>
+  </div>
+
+
+<p>Damping affects the speed with which forces act on the cloth. Increasing damping leads to a slower simulation with the cloth more gradually being affected by both external and internal forces. This is because damping is used to simulate energy lost due to friction, heat and other factors and leads to the reduction of velocity. Although the final resting state of the cloth is similar for low and high values of damping, the cloth takes much longer to reach this resting state with high damping. Here are some screenshots with a relatively low damping value (=0.2):</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part2_small_damping_0.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part2_small_damping_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part2_small_damping_2.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/pinned2.json with low damping (=0.2). The first screenshot is shortly after the start, the second is in the middle of the simulation and the last is at the end.</caption>
+  </div>
+
+Here are some screenshots with a relatively higher damping value (~0.9) - the cloth takes much longer to get to these points when compared to a low damping value simulation:</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part2_large_damping_0.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part2_large_damping_1.png" align="middle" width="480px" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="images/part2_large_damping_2.png" align="middle" width="480px" />
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/pinned2.json with large damping (~0.9). The first screenshot is shortly after the start, the second is in the middle of the simulation and the last is at the end.</caption>
+  </div>
+
+
+<p>Finally, here are some screenshots of the resting state of the cloth from scene/pinned4.json simulated using our code (we use default parameters):</p>
+
+<div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/part2_pinned4.png" align="middle" width="480px" />
+        </td>
+        <td>
+          <img src="images/part2_pinned4_1.png" align="middle" width="480px" />
+        </td>
+        </td>
+      </tr>
+    </table>
+    <caption>Screenshots of scene/pinned4.json in the final resting state</caption>
+  </div>
 
 </body>
 </html>
